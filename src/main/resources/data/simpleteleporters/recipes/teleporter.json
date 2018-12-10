@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    " # ",
+    "BQB",
+    "QQQ"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:gold_block"
+    },
+    "B": {
+      "item": "simpleteleporters:tele_crystal"
+    },
+    "Q": {
+      "item": "minecraft:quartz_block"
+    }
+  },
+  "result": {
+    "item": "simpleteleporters:teleporter",
+    "count": 1
+  }
+}

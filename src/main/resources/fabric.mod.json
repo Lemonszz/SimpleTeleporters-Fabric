@@ -1,0 +1,10 @@
+{
+  "id": "simpleteleporters",
+  "name": "Simple Teleporters",
+  "version": "1.0.0",
+  "side": "universal",
+  "initializers": [
+    "party.lemons.simpleteleporters.SimpleTeleporters",
+    "party.lemons.simpleteleporters.SimpleTeleportersClient"
+  ]
+}

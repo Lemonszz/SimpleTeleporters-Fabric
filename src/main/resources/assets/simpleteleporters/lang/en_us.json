@@ -1,0 +1,9 @@
+{
+    "item.simpleteleporters.tele_crystal": "Ender Shard",
+    "block.simpleteleporters.teleporter": "Teleporter",
+
+    "text.teleporters.unlinked": "Unlinked",
+    "text.teleporters.linked": "Linked: %1$s, %2$s, %3$s",
+    "text.teleporters.howtolink": "Sneak right click a block to link",
+    "text.teleporters.crystalinfo": "This crystal is linked at %1$s, %2$s, %3$s"
+}
