@@ -18,7 +18,7 @@ public class SimpleTeleportersItems
 
 	public static Item registerItem(Item item, String name)
 	{
-		Registry.register(Registry.ITEMS, MODID + ":" + name, item);
+		Registry.register(Registry.ITEM, MODID + ":" + name, item);
 
 		return item;
 	}

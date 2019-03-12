@@ -46,17 +46,17 @@ public class TeleportCrystalItem extends Item
 			tags.putInt("dim", player.dimension.getRawId());
 			tags.putFloat("direction", player.yaw);
 
-			if(ctx.getWorld().isRemote)
+			if(ctx.getWorld().getServer().isRemote())
 			{
 				TranslatableTextComponent msg = new TranslatableTextComponent("text.teleporters.crystalinfo", offPos.getX(), offPos.getY(), offPos.getZ());
 				msg.setStyle(new Style().setColor(TextFormat.GREEN));
 
 				player.addChatMessage(msg, true);
 			}
-			player.playSoundAtEntity(Sounds.ENTITY_ENDERMAN_TELEPORT, 0.5F, 0.4F / (ctx.getWorld().random.nextFloat() * 0.4F + 0.8F));
-			return ActionResult.SUCCESS;
+			// player.playSoundAtEntity(Sounds.ENTITY_ENDERMAN_TELEPORT, 0.5F, 0.4F / (ctx.getWorld().random.nextFloat() * 0.4F + 0.8F));
+			return ActionResult.PASS;
 		}
-		return ActionResult.FAILURE;
+		return null;
 	}
 
 	@Override

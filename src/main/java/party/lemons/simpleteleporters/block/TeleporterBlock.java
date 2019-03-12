@@ -25,7 +25,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BoundingBox;
 import net.minecraft.block.FacingBlock;
-import net.minecraft.util.shape.OffsetVoxelShapeContainer;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.IWorld;
@@ -42,7 +42,7 @@ public class TeleporterBlock extends BlockWithEntity
 {
 	public static BooleanProperty ON = BooleanProperty.create("on");
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-	protected static final OffsetVoxelShapeContainer TELE_AABB = VoxelShapes.cube(0D, 0.0D, 0D, 1D, 0.3D, 1D);
+	protected static final VoxelShape TELE_AABB = VoxelShapes.cube(0D, 0.0D, 0D, 1D, 0.3D, 1D);
 
 
 	public TeleporterBlock(Settings settings)
@@ -76,13 +76,13 @@ public class TeleporterBlock extends BlockWithEntity
 	}
 
 	@Override
-	public boolean activate(BlockState state, World world, BlockPos pos, PlayerEntity playerEntity, Hand hand) { //, FacingBlock facing, float v, float v1, float v2)
+	public boolean activate(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand) //, FacingBlock facing, float v, float v1, float v2)
 	{
 		TeleporterBlockEntity tele = (TeleporterBlockEntity) world.getBlockEntity(pos);
 		if(tele.hasCrystal())
 		{
 			ItemStack crystalStack = tele.getCrystal();
-			playerEntity.inventory.insertStack(crystalStack);
+			player.inventory.insertStack(crystalStack);
 			// playerEntity.playSoundAtEntity(Sounds.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 
 			world.setBlockState(pos, state.with(ON, false));
@@ -92,7 +92,7 @@ public class TeleporterBlock extends BlockWithEntity
 		}
 		else
 		{
-			ItemStack stack = playerEntity.getStackInHand(hand);
+			ItemStack stack = player.getStackInHand(hand);
 			if(!stack.isEmpty())
 			{
 				if(stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL && stack.getTag() != null)
@@ -119,24 +119,25 @@ public class TeleporterBlock extends BlockWithEntity
 		super.onBreak(world, blockPos, blockState, playerEntity);
 	}
 
+/*
 	@Override
 	public FluidState getFluidState(BlockState var1)
 	{
-		return var1.get(WATERLOGGED) ? Fluids.WATER.method_15729(false) : super.getFluidState(var1);
+		return var1.get(WATERLOGGED) ? Fluids.WATER.getState(false) : super.getFluidState(var1);
 	}
 
 	@Override
-	public BlockState getRenderingState(BlockState state, FacingBlock facing, BlockState anotherState, IWorld world, BlockPos pos, BlockPos anotherPos)
+	public BlockState getRenderingState(BlockState state, IWorld world, BlockPos pos) // FacingBlock facing, BlockState anotherState, IWorld world, BlockPos pos, BlockPos anotherPos)
 	{
 		if (state.get(WATERLOGGED)) {
-			world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.method_15789(world));
+			world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 		}
 
-		return super.getRenderingState(state, facing, anotherState, world, pos, anotherPos);
+		return super.getRenderingState(state, world, pos); // facing, anotherState, world, pos, anotherPos);
 	}
-
+*/
 	@Override
-	public OffsetVoxelShapeContainer getBoundingShape(BlockState state, BlockView world, BlockPos pos)
+	public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos)
 	{
 		return TELE_AABB;
 	}
@@ -164,7 +165,7 @@ public class TeleporterBlock extends BlockWithEntity
 		{
 			for(int i = 0; i < 15; i++)
 			{
-				world.method_8406(ParticleTypes.PORTAL, pos.getX() + 0.2F + (random.nextFloat()/2), pos.getY() + 0.4F, pos.getZ() + 0.2F + (random.nextFloat()/2), 0, random.nextFloat(), 0);
+				world.addParticle(ParticleTypes.PORTAL, pos.getX() + 0.2F + (random.nextFloat()/2), pos.getY() + 0.4F, pos.getZ() + 0.2F + (random.nextFloat()/2), 0, random.nextFloat(), 0);
 			}
 		}
 	}

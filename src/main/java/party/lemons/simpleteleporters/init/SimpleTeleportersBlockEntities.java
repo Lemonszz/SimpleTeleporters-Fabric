@@ -21,6 +21,6 @@ public class SimpleTeleportersBlockEntities
 
 	public static BlockEntityType registerBlockEntityType(String name, Supplier<BlockEntity> be)
 	{
-		return Registry.register(Registry.BLOCK_ENTITIES, MODID + ":" + name, BlockEntityType.Builder.create(be).method_11034(null));
+		return Registry.register(Registry.BLOCK_ENTITY, MODID + ":" + name, BlockEntityType.Builder.create(be).method_11034(null));
 	}
 }

@@ -31,7 +31,7 @@ public class SimpleTeleportersClient implements ClientModInitializer
 								BlockPos telePos = new BlockPos(tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
 								if(telePos.distanceTo(client.player.getPos()) < 15)
 								{
-									client.world.method_8406(ParticleTypes.MYCELIUM,
+									client.world.addParticle(ParticleTypes.MYCELIUM,
 											telePos.getX() + (1.1 - client.world.random.nextFloat()),
 											telePos.getY() + (1.1 - client.world.random.nextFloat()),
 											telePos.getZ() + (1.1 - client.world.random.nextFloat()),

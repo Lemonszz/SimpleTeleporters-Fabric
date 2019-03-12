@@ -27,7 +27,7 @@ public class SimpleTeleportersBlocks
 
 	private static Block registerBlock(Block block, String name, boolean doItem)
 	{
-		Registry.register(Registry.BLOCKS, MODID + ":" + name, block);
+		Registry.register(Registry.BLOCK, MODID + ":" + name, block);
 
 		if(doItem)
 		{
