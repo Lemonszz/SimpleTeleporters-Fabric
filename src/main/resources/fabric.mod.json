@@ -1,7 +1,7 @@
 {
   "id": "simpleteleporters",
   "name": "Simple Teleporters",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "side": "universal",
   "initializers": [
     "party.lemons.simpleteleporters.SimpleTeleporters",

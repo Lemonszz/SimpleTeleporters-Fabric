@@ -1,7 +1,7 @@
 package party.lemons.simpleteleporters;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.events.client.ClientTickEvent;
+import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
@@ -14,7 +14,7 @@ public class SimpleTeleportersClient implements ClientModInitializer
 	@Override
 	public void onInitializeClient()
 	{
-		ClientTickEvent.CLIENT.register((client) ->
+		ClientTickCallback.EVENT.register((client) ->
 		{
 			if(client.world != null && client.player != null)
 			{

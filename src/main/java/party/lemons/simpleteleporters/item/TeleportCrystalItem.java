@@ -1,12 +1,12 @@
 package party.lemons.simpleteleporters.item;
 
-import net.minecraft.client.item.TooltipOptions;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sound.Sounds;
+// import net.minecraft.sound.Sounds;
 import net.minecraft.text.Style;
 import net.minecraft.text.TextComponent;
 import net.minecraft.text.TextFormat;
@@ -60,7 +60,7 @@ public class TeleportCrystalItem extends Item
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, World world, List<TextComponent> list, TooltipOptions tooltipOptions)
+	public void addInformation(ItemStack stack, World world, List<TextComponent> list, TooltipContext tooltipOptions)
 	{
 		CompoundTag tags = stack.getTag();
 		if(tags == null)
