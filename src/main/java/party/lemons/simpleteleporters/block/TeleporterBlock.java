@@ -65,34 +65,21 @@ public class TeleporterBlock extends BlockWithEntity
 			if(teleporter.hasCrystal() && teleporter.isInDimension(entity))
 			{
 				entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-				if(world.getServer() == null || !world.getServer().isRemote())
+				if(entity instanceof ServerPlayerEntity && world.getServer() != null && !world.getServer().isRemote())
 				{
-					BlockPos teleporterPos = teleporter.getTeleportPosition();
-					System.out.println("simpleteleporters entity class = " + entity.toString() + " " + entity.getClass().toString());
-
-					if (entity instanceof ClientPlayerEntity) {
-						ClientPlayerEntity cplayer = (ClientPlayerEntity) entity;
-
-						cplayer.setPositionAnglesAndUpdate(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch);
-
-						cplayer.addVelocity(0, 0.5, 0);
-						cplayer.velocityDirty = true;
-					}
-
-					else if (entity instanceof ServerPlayerEntity) {
+						BlockPos teleporterPos = teleporter.getTeleportPosition();
 						ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
+
+						splayer.velocityModified = true;
 
 						splayer.networkHandler.teleportRequest(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
 
-						splayer.addVelocity(0, 0.5, 0); // originally just a velocityY =
+						splayer.setVelocity(0, 0.5, 0); // originally just a velocityY =
 						splayer.velocityDirty = true; // maybe scheduleVelocityUpdate ?
-					}
 
+						splayer.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
 				}
-
-				entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
 			}
-
 		}
 	}
 
@@ -192,15 +179,6 @@ public class TeleporterBlock extends BlockWithEntity
 		return BlockRenderType.MODEL;
 	}
 
-	/*
-
-	@Override
-	public BlockRenderLayer getRenderLayer()
-	{
-		return BlockRenderLayer.TRANSLUCENT;
-	}
-*/
-
 	@Override
 	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random)
 	{
@@ -208,8 +186,7 @@ public class TeleporterBlock extends BlockWithEntity
 		{
 			for(int i = 0; i < 15; i++)
 			{
-				// originally method_8406
-				world.addParticle(ParticleTypes.PORTAL, pos.getX() + 0.2F + (random.nextFloat()/2), pos.getY() + 0.4F, pos.getZ() + 0.2F + (random.nextFloat()/2), 0, random.nextFloat(), 0);
+				world.addParticle(ParticleTypes.PORTAL, pos.getX() + 0.2F + (random.nextFloat()/2), pos.getY() + 0.4F, pos.getZ() + 0.2F + (random.nextFloat()/2), 0, random.nextFloat(), 0); 	// originally method_8406
 			}
 		}
 	}
