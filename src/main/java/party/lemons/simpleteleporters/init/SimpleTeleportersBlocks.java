@@ -1,6 +1,6 @@
 package party.lemons.simpleteleporters.init;
 
-import net.fabricmc.fabric.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.item.Item;
@@ -17,7 +17,7 @@ public class SimpleTeleportersBlocks
 
 	public static void init()
 	{
-		TELEPORTER = registerBlock(new TeleporterBlock(FabricBlockSettings.create(Material.STONE).setHardness(1).setResistance(1).setLuminance(15).build()), "teleporter");
+		TELEPORTER = registerBlock(new TeleporterBlock(FabricBlockSettings.of(Material.STONE).hardness(1).resistance(1).lightLevel(15).build()), "teleporter");
 	}
 
 	private static Block registerBlock(Block block, String name)
@@ -27,7 +27,7 @@ public class SimpleTeleportersBlocks
 
 	private static Block registerBlock(Block block, String name, boolean doItem)
 	{
-		Registry.register(Registry.BLOCKS, MODID + ":" + name, block);
+		Registry.register(Registry.BLOCK, MODID + ":" + name, block);
 
 		if(doItem)
 		{

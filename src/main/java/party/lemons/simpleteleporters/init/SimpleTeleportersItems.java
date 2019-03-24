@@ -2,6 +2,7 @@ package party.lemons.simpleteleporters.init;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import party.lemons.simpleteleporters.item.TeleportCrystalItem;
 
@@ -18,7 +19,7 @@ public class SimpleTeleportersItems
 
 	public static Item registerItem(Item item, String name)
 	{
-		Registry.register(Registry.ITEMS, MODID + ":" + name, item);
+		Registry.register(Registry.ITEM, MODID + ":" + name, item);
 
 		return item;
 	}
