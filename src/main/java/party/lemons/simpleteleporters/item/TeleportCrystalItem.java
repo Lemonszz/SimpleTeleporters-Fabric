@@ -6,7 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.CompoundTag;
-// import net.minecraft.sound.Sounds;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.TextComponent;
 import net.minecraft.text.TextFormat;
@@ -46,14 +46,14 @@ public class TeleportCrystalItem extends Item
 			tags.putInt("dim", player.dimension.getRawId());
 			tags.putFloat("direction", player.yaw);
 
-			if(ctx.getWorld().getServer().isRemote())
+			if(ctx.getWorld().getServer() != null && ctx.getWorld().getServer().isRemote())
 			{
 				TranslatableTextComponent msg = new TranslatableTextComponent("text.teleporters.crystalinfo", offPos.getX(), offPos.getY(), offPos.getZ());
 				msg.setStyle(new Style().setColor(TextFormat.GREEN));
 
 				player.addChatMessage(msg, true);
 			}
-			// player.playSoundAtEntity(Sounds.ENTITY_ENDERMAN_TELEPORT, 0.5F, 0.4F / (ctx.getWorld().random.nextFloat() * 0.4F + 0.8F));
+			player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.5F, 0.4F / (ctx.getWorld().random.nextFloat() * 0.4F + 0.8F));
 			return ActionResult.PASS;
 		}
 		return null;
