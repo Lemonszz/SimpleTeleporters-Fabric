@@ -7,6 +7,7 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
+import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.VerticalEntityPosition;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sortme.ItemScatterer;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateFactory;
@@ -66,14 +68,26 @@ public class TeleporterBlock extends BlockWithEntity
 				if(world.getServer() == null || !world.getServer().isRemote())
 				{
 					BlockPos teleporterPos = teleporter.getTeleportPosition();
-					ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
+					System.out.println("simpleteleporters entity class = " + entity.toString() + " " + entity.getClass().toString());
 
-					// originally method_14360
+					if (entity instanceof ClientPlayerEntity) {
+						ClientPlayerEntity cplayer = (ClientPlayerEntity) entity;
 
-					splayer.networkHandler.teleportRequest(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
+						cplayer.setPositionAnglesAndUpdate(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch);
 
-					splayer.addVelocity(0, 0.5, 0); // originally just a velocityY =
-					splayer.velocityDirty = true; // maybe scheduleVelocityUpdate ?
+						cplayer.addVelocity(0, 0.5, 0);
+						cplayer.velocityDirty = true;
+					}
+
+					else if (entity instanceof ServerPlayerEntity) {
+						ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
+
+						splayer.networkHandler.teleportRequest(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
+
+						splayer.addVelocity(0, 0.5, 0); // originally just a velocityY =
+						splayer.velocityDirty = true; // maybe scheduleVelocityUpdate ?
+					}
+
 				}
 
 				entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
