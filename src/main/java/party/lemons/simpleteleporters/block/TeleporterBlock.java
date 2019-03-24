@@ -24,6 +24,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BoundingBox;
+import net.minecraft.util.math.Direction;
 import net.minecraft.block.FacingBlock;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -131,17 +132,15 @@ public class TeleporterBlock extends BlockWithEntity
 		return var1.get(WATERLOGGED) ? Fluids.WATER.getState(false) : super.getFluidState(var1);
 	}
 
-	/*
-- --> now static?
 	@Override
-	public BlockState getRenderingState(BlockState state, IWorld world, BlockPos pos) // FacingBlock facing, BlockState anotherState, IWorld world, BlockPos pos, BlockPos anotherPos)
+	public BlockState getStateForNeighborUpdate(BlockState state, Direction facing, BlockState neighborState, IWorld world, BlockPos pos, BlockPos neighborPos)
 	{
 		if (state.get(WATERLOGGED)) {
 			world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world)); // getTickRate == method_15789?
 		}
 
-		return super.getRenderingState(state, world, pos); // facing, anotherState, world, pos, anotherPos);
-	}*/
+		return super.getStateForNeighborUpdate(state, facing, neighborState, world, pos, neighborPos);
+	}
 
 	@Override
 	public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos)

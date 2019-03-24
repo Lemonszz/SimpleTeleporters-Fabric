@@ -47,6 +47,6 @@ public class SimpleTeleportersClient implements ClientModInitializer
 
 	// TODO: replace with distanceTo or distanceSq as exists in BlockPos Or Vec3d API when it becomes evident
 	private double distanceBetween(BlockPos pos1, BlockPos pos2) {
-		return Math.abs((pos1.getX() - pos2.getX()) + (pos1.getY() - pos2.getY()) + (pos1.getZ() - pos2.getZ()));
+		return Math.abs(Math.abs(pos1.getX() - pos2.getX()) + Math.abs(pos1.getY() - pos2.getY()) + Math.abs(pos1.getZ() - pos2.getZ()));
 	}
 }
