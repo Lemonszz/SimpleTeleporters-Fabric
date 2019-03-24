@@ -29,9 +29,9 @@ public class SimpleTeleportersClient implements ClientModInitializer
 							if(tags.getInt("dim") == client.player.dimension.getRawId())
 							{
 								BlockPos telePos = new BlockPos(tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
-								if(telePos.distanceTo(client.player.getPos()) < 15)
+								if(distanceBetween(client.player.getBlockPos(), telePos) < 15)
 								{
-									client.world.addParticle(ParticleTypes.MYCELIUM, // originally method_8406
+									client.world.addParticle(ParticleTypes.MYCELIUM, // originally
 											telePos.getX() + (1.1 - client.world.random.nextFloat()),
 											telePos.getY() + (1.1 - client.world.random.nextFloat()),
 											telePos.getZ() + (1.1 - client.world.random.nextFloat()),
@@ -43,5 +43,10 @@ public class SimpleTeleportersClient implements ClientModInitializer
 				}
 			}
 		});
+	}
+
+	// TODO: replace with distanceTo or distanceSq as exists in BlockPos Or Vec3d API when it becomes evident
+	private double distanceBetween(BlockPos pos1, BlockPos pos2) {
+		return Math.abs((pos1.getX() - pos2.getX()) + (pos1.getY() - pos2.getY()) + (pos1.getZ() - pos2.getZ()));
 	}
 }

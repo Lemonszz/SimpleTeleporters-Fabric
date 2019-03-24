@@ -13,6 +13,7 @@ import net.minecraft.text.TextFormat;
 import net.minecraft.text.TranslatableTextComponent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class TeleportCrystalItem extends Item
 				tags = stack.getTag();
 			}
 
-			BlockPos offPos = ctx.getPos().offset(ctx.getFacing());
+			BlockPos offPos = ctx.getBlockPos().offset(ctx.getFacing());
 			tags.putInt("x", offPos.getX());
 			tags.putInt("y", offPos.getY());
 			tags.putInt("z", offPos.getZ());
@@ -60,7 +61,7 @@ public class TeleportCrystalItem extends Item
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, World world, List<TextComponent> list, TooltipContext tooltipOptions)
+	public void buildTooltip(ItemStack stack, World world, List<TextComponent> tooltip, TooltipContext options)
 	{
 		CompoundTag tags = stack.getTag();
 		if(tags == null)
@@ -71,8 +72,8 @@ public class TeleportCrystalItem extends Item
 			TranslatableTextComponent info = new TranslatableTextComponent("text.teleporters.howtolink");
 			info.setStyle(new Style().setColor(TextFormat.BLUE));
 
-			list.add(unlinked);
-			list.add(info);
+			tooltip.add(unlinked);
+			tooltip.add(info);
 
 		}
 		else
@@ -80,7 +81,7 @@ public class TeleportCrystalItem extends Item
 			TranslatableTextComponent pos = new TranslatableTextComponent("text.teleporters.linked", tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
 			pos.setStyle(new Style().setColor(TextFormat.GREEN));
 
-			list.add(pos);
+			tooltip.add(pos);
 		}
 	}
 }

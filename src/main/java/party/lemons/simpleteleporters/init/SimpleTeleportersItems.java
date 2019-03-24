@@ -2,6 +2,7 @@ package party.lemons.simpleteleporters.init;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import party.lemons.simpleteleporters.item.TeleportCrystalItem;
 

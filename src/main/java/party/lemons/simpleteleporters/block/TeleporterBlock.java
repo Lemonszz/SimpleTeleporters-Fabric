@@ -27,6 +27,8 @@ import net.minecraft.util.math.BoundingBox;
 import net.minecraft.block.FacingBlock;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -65,9 +67,11 @@ public class TeleporterBlock extends BlockWithEntity
 					ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
 
 					// originally method_14360
-					splayer.networkHandler.teleportRequest(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch, EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag));
-					// splayer.velocityY = 0.5F;
-					// splayer.velocityDirty = true;
+
+					splayer.networkHandler.teleportRequest(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
+
+					splayer.addVelocity(0, 0.5, 0); // originally just a velocityY =
+					splayer.velocityDirty = true; // maybe scheduleVelocityUpdate ?
 				}
 
 				entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
@@ -77,14 +81,14 @@ public class TeleporterBlock extends BlockWithEntity
 	}
 
 	@Override
-	public boolean activate(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand) //, FacingBlock facing, float v, float v1, float v2)
+	public boolean activate(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) //float v, float v1, float v2)
 	{
 		TeleporterBlockEntity tele = (TeleporterBlockEntity) world.getBlockEntity(pos);
 		if(tele.hasCrystal())
 		{
 			ItemStack crystalStack = tele.getCrystal();
 			player.inventory.insertStack(crystalStack);
-			playerEntity.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
+			player.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 
 			world.setBlockState(pos, state.with(ON, false));
 			tele.setCrystal(ItemStack.EMPTY);
@@ -98,7 +102,7 @@ public class TeleporterBlock extends BlockWithEntity
 			{
 				if(stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL && stack.getTag() != null)
 				{
-					payerEntity.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
+					player.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 					world.setBlockState(pos, state.with(ON, true));
 					ItemStack setstack = stack.copy();
 					setstack.setAmount(1);
@@ -127,6 +131,8 @@ public class TeleporterBlock extends BlockWithEntity
 		return var1.get(WATERLOGGED) ? Fluids.WATER.getState(false) : super.getFluidState(var1);
 	}
 
+	/*
+- --> now static?
 	@Override
 	public BlockState getRenderingState(BlockState state, IWorld world, BlockPos pos) // FacingBlock facing, BlockState anotherState, IWorld world, BlockPos pos, BlockPos anotherPos)
 	{
@@ -135,7 +141,7 @@ public class TeleporterBlock extends BlockWithEntity
 		}
 
 		return super.getRenderingState(state, world, pos); // facing, anotherState, world, pos, anotherPos);
-	}
+	}*/
 
 	@Override
 	public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos)
@@ -175,7 +181,7 @@ public class TeleporterBlock extends BlockWithEntity
 
 	public BlockState getPlacementState(ItemPlacementContext ctx)
 	{
-		FluidState fs = ctx.getWorld().getFluidState(ctx.getPos());
+		FluidState fs = ctx.getWorld().getFluidState(ctx.getBlockPos());
 		boolean isWater = fs.getFluid() == Fluids.WATER;
 		return this.getDefaultState().with(WATERLOGGED, isWater);
 	}
