@@ -9,6 +9,7 @@ import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.VerticalEntityPosition;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
@@ -149,11 +150,22 @@ public class TeleporterBlock extends BlockWithEntity
 	}
 
 	@Override
+	public VoxelShape getCollisionShape(BlockState state, BlockView view, BlockPos pos, VerticalEntityPosition ePos)
+	{
+		return TELE_AABB;
+	}
+
+	@Override
+	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, VerticalEntityPosition ePos)
+	{
+		return TELE_AABB;
+ 	}
+
+	@Override
 	protected void appendProperties(StateFactory.Builder<Block, BlockState> st)
 	{
 		st.with(ON).with(WATERLOGGED);
 	}
-
 
 	@Override
 	public BlockEntity createBlockEntity(BlockView blockView)
@@ -161,9 +173,19 @@ public class TeleporterBlock extends BlockWithEntity
 		return new TeleporterBlockEntity();
 	}
 
-	public BlockRenderType getRenderType(BlockState var1) {
+	public BlockRenderType getRenderType(BlockState var1)
+	{
 		return BlockRenderType.MODEL;
 	}
+
+	/*
+
+	@Override
+	public BlockRenderLayer getRenderLayer()
+	{
+		return BlockRenderLayer.TRANSLUCENT;
+	}
+*/
 
 	@Override
 	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random)
@@ -181,7 +203,7 @@ public class TeleporterBlock extends BlockWithEntity
 	public BlockState getPlacementState(ItemPlacementContext ctx)
 	{
 		FluidState fs = ctx.getWorld().getFluidState(ctx.getBlockPos());
-		boolean isWater = fs.getFluid() == Fluids.WATER;
+		boolean isWater = fs.getFluid().equals(Fluids.WATER);
 		return this.getDefaultState().with(WATERLOGGED, isWater);
 	}
 }

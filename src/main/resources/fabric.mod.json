@@ -1,10 +1,14 @@
 {
   "id": "simpleteleporters",
   "name": "Simple Teleporters",
+  "description": "Simple Teleporters adds a craftable teleporter block to quickly travel your world!",
   "version": "2.0.0",
   "side": "universal",
   "initializers": [
     "party.lemons.simpleteleporters.SimpleTeleporters",
     "party.lemons.simpleteleporters.SimpleTeleportersClient"
-  ]
+  ],
+  "requires": {
+    "fabric": "*"
+  }
 }
