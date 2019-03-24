@@ -19,7 +19,9 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sortme.ItemScatterer;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateFactory;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
@@ -64,20 +66,20 @@ public class TeleporterBlock extends BlockWithEntity
 			TeleporterBlockEntity teleporter = (TeleporterBlockEntity) world.getBlockEntity(pos);
 			if(teleporter.hasCrystal() && teleporter.isInDimension(entity))
 			{
-				entity.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
-				if(entity instanceof ServerPlayerEntity && world.getServer() != null && !world.getServer().isRemote())
+				if(entity instanceof ServerPlayerEntity && !world.isClient) // !world.getServer().isRemote())
 				{
 						BlockPos teleporterPos = teleporter.getTeleportPosition();
 						ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
 
 						splayer.velocityModified = true;
 
-						splayer.networkHandler.teleportRequest(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5, entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
+						BlockPos playerPos = new BlockPos(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5);
+						splayer.networkHandler.teleportRequest(playerPos.getX(), playerPos.getY(), playerPos.getZ(), entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
 
-						splayer.setVelocity(0, 0.5, 0); // originally just a velocityY =
+						splayer.setVelocity(0, 0, 0); // originally just a velocityY =
 						splayer.velocityDirty = true; // maybe scheduleVelocityUpdate ?
 
-						splayer.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+						world.playSound(null, playerPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCK, 1.0F, 1.0F);
 				}
 			}
 		}
