@@ -5,30 +5,23 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
-import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityContext;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.VerticalEntityPosition;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.sortme.ItemScatterer;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateFactory;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Hand;
-import net.minecraft.inventory.Inventories;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BoundingBox;
 import net.minecraft.util.math.Direction;
 import net.minecraft.block.FacingBlock;
 import net.minecraft.util.shape.VoxelShape;
@@ -50,7 +43,7 @@ public class TeleporterBlock extends BlockWithEntity
 {
 	public static BooleanProperty ON = BooleanProperty.create("on");
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-	protected static final VoxelShape TELE_AABB = VoxelShapes.cube(0D, 0.0D, 0D, 1D, 0.3D, 1D); // originally instance of VoxelShapeContainer
+	protected static final VoxelShape TELE_AABB = VoxelShapes.cuboid(0D, 0.0D, 0D, 1D, 0.3D, 1D); // originally instance of VoxelShapeContainer
 
 	public TeleporterBlock(Settings settings)
 	{
@@ -79,7 +72,7 @@ public class TeleporterBlock extends BlockWithEntity
 						splayer.setVelocity(0, 0, 0); // originally just a velocityY =
 						splayer.velocityDirty = true; // maybe scheduleVelocityUpdate ?
 
-						world.playSound(null, playerPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCK, 1.0F, 1.0F);
+						world.playSound(null, playerPos, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				}
 			}
 		}
@@ -133,7 +126,7 @@ public class TeleporterBlock extends BlockWithEntity
 	@Override
 	public FluidState getFluidState(BlockState var1)
 	{
-		return var1.get(WATERLOGGED) ? Fluids.WATER.getState(false) : super.getFluidState(var1);
+		return var1.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(var1);
 	}
 
 	@Override
@@ -153,13 +146,13 @@ public class TeleporterBlock extends BlockWithEntity
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState state, BlockView view, BlockPos pos, VerticalEntityPosition ePos)
+	public VoxelShape getCollisionShape(BlockState state, BlockView view, BlockPos pos, EntityContext ePos)
 	{
 		return TELE_AABB;
 	}
 
 	@Override
-	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, VerticalEntityPosition ePos)
+	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, EntityContext ePos)
 	{
 		return TELE_AABB;
  	}
@@ -167,7 +160,7 @@ public class TeleporterBlock extends BlockWithEntity
 	@Override
 	protected void appendProperties(StateFactory.Builder<Block, BlockState> st)
 	{
-		st.with(ON).with(WATERLOGGED);
+		st.add(ON).add(WATERLOGGED);
 	}
 
 	@Override

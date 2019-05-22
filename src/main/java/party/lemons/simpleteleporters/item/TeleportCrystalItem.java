@@ -1,19 +1,18 @@
 package party.lemons.simpleteleporters.item;
 
+import net.minecraft.ChatFormat;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Style;
-import net.minecraft.text.TextComponent;
-import net.minecraft.text.TextFormat;
-import net.minecraft.text.TranslatableTextComponent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -49,8 +48,8 @@ public class TeleportCrystalItem extends Item
 
 			if(ctx.getWorld().getServer() != null && ctx.getWorld().getServer().isRemote())
 			{
-				TranslatableTextComponent msg = new TranslatableTextComponent("text.teleporters.crystalinfo", offPos.getX(), offPos.getY(), offPos.getZ());
-				msg.setStyle(new Style().setColor(TextFormat.GREEN));
+				TranslatableComponent msg = new TranslatableComponent("text.teleporters.crystalinfo", offPos.getX(), offPos.getY(), offPos.getZ());
+				msg.setStyle(new Style().setColor(ChatFormat.GREEN));
 
 				player.addChatMessage(msg, true);
 			}
@@ -61,16 +60,16 @@ public class TeleportCrystalItem extends Item
 	}
 
 	@Override
-	public void buildTooltip(ItemStack stack, World world, List<TextComponent> tooltip, TooltipContext options)
+	public void buildTooltip(ItemStack stack, World world, List<Component> tooltip, TooltipContext options)
 	{
 		CompoundTag tags = stack.getTag();
 		if(tags == null)
 		{
-			TranslatableTextComponent unlinked = new TranslatableTextComponent("text.teleporters.unlinked");
-			unlinked.setStyle(new Style().setColor(TextFormat.RED));
+			TranslatableComponent unlinked = new TranslatableComponent("text.teleporters.unlinked");
+			unlinked.setStyle(new Style().setColor(ChatFormat.RED));
 
-			TranslatableTextComponent info = new TranslatableTextComponent("text.teleporters.howtolink");
-			info.setStyle(new Style().setColor(TextFormat.BLUE));
+			TranslatableComponent info = new TranslatableComponent("text.teleporters.howtolink");
+			info.setStyle(new Style().setColor(ChatFormat.BLUE));
 
 			tooltip.add(unlinked);
 			tooltip.add(info);
@@ -78,8 +77,8 @@ public class TeleportCrystalItem extends Item
 		}
 		else
 		{
-			TranslatableTextComponent pos = new TranslatableTextComponent("text.teleporters.linked", tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
-			pos.setStyle(new Style().setColor(TextFormat.GREEN));
+			TranslatableComponent pos = new TranslatableComponent("text.teleporters.linked", tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
+			pos.setStyle(new Style().setColor(ChatFormat.GREEN));
 
 			tooltip.add(pos);
 		}
