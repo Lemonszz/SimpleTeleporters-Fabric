@@ -1,0 +1,9 @@
+{
+    "item.simpleteleporters.tele_crystal": "末影碎片",
+    "block.simpleteleporters.teleporter": "传送器",
+
+    "text.teleporters.unlinked": "未链接",
+    "text.teleporters.linked": "已链接到: %1$s, %2$s, %3$s",
+    "text.teleporters.howtolink": "潜行时右击方块以链接",
+    "text.teleporters.crystalinfo": "这个水晶链接在%1$s, %2$s, %3$s"
+}
