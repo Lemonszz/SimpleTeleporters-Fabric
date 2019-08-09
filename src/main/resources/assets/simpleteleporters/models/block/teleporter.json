@@ -1,6 +1,6 @@
 {
   "textures": {
-    "particle": "block/portal",
+    "particle": "block/nether_portal",
     "0": "block/quartz_block_top",
     "1": "block/quartz_pillar_top",
     "2": "block/gold_block",

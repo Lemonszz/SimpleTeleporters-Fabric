@@ -5,13 +5,11 @@ import party.lemons.simpleteleporters.init.SimpleTeleportersBlockEntities;
 import party.lemons.simpleteleporters.init.SimpleTeleportersBlocks;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
-public class SimpleTeleporters implements ModInitializer
-{
+public class SimpleTeleporters implements ModInitializer {
 	public static final String MODID = "simpleteleporters";
 
 	@Override
-	public void onInitialize()
-	{
+	public void onInitialize() {
 		SimpleTeleportersBlocks.init();
 		SimpleTeleportersItems.init();
 		SimpleTeleportersBlockEntities.init();

@@ -11,28 +11,23 @@ import party.lemons.simpleteleporters.block.TeleporterBlock;
 
 import static party.lemons.simpleteleporters.SimpleTeleporters.MODID;
 
-public class SimpleTeleportersBlocks
-{
+public class SimpleTeleportersBlocks {
 	public static Block TELEPORTER;
 
-	public static void init()
-	{
+	public static void init() {
 		TELEPORTER = registerBlock(new TeleporterBlock(FabricBlockSettings.of(Material.STONE).hardness(1).resistance(1).lightLevel(15).build()), "teleporter");
 	}
 
-	private static Block registerBlock(Block block, String name)
-	{
+	private static Block registerBlock(Block block, String name) {
 		return registerBlock(block, name, true);
 	}
 
-	private static Block registerBlock(Block block, String name, boolean doItem)
-	{
+	private static Block registerBlock(Block block, String name, boolean doItem) {
 		Registry.register(Registry.BLOCK, MODID + ":" + name, block);
 
-		if(doItem)
-		{
-			BlockItem item = new BlockItem(block, new Item.Settings().itemGroup(ItemGroup.TRANSPORTATION));
-			item.registerBlockItemMap(Item.BLOCK_ITEM_MAP, item);
+		if (doItem) {
+			BlockItem item = new BlockItem(block, new Item.Settings().group(ItemGroup.TRANSPORTATION));
+			item.appendBlocks(Item.BLOCK_ITEMS, item);
 			SimpleTeleportersItems.registerItem(item, name);
 		}
 		return block;

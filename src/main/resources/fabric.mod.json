@@ -1,17 +1,15 @@
 {
   "schemaVersion": 1,
   "id": "simpleteleporters",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "name": "Simple Teleporters",
   "description": "Simple Teleporters adds a craftable teleporter block to quickly travel your world!",
   "authors": [
-    "Lemonszz"
-  ],
-  "contributors": [
+    "Lemonszz",
     "Shnupbups"
   ],
   "contact": {
-    "homepage": "https://minecraft.curseforge.com/projects/simple-teleporters",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-teleporters-fabric",
     "sources": "https://github.com/Lemonszz/SimpleTeleporters-Fabric",
     "issues": "https://github.com/Lemonszz/SimpleTeleporters-Fabric/issues"
   },
