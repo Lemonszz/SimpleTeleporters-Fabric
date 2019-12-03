@@ -2,11 +2,13 @@ package party.lemons.simpleteleporters;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
 public class SimpleTeleportersClient implements ClientModInitializer {
@@ -36,7 +38,7 @@ public class SimpleTeleportersClient implements ClientModInitializer {
 			}
 		});
 	}
-
+	
 	// TODO: replace with distanceTo or distanceSq as exists in BlockPos Or Vec3d API when it becomes evident
 	private double distanceBetween(BlockPos pos1, BlockPos pos2) {
 		return Math.abs(Math.abs(pos1.getX() - pos2.getX()) + Math.abs(pos1.getY() - pos2.getY()) + Math.abs(pos1.getZ() - pos2.getZ()));

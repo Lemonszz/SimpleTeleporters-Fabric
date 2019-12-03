@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "simpleteleporters",
-  "version": "2.2.0",
+  "version": "${version}",
   "name": "Simple Teleporters",
   "description": "Simple Teleporters adds a craftable teleporter block to quickly travel your world!",
   "authors": [
@@ -24,7 +24,7 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.4.0",
+    "fabricloader": ">=0.6.0",
     "fabric": "*"
   }
 }

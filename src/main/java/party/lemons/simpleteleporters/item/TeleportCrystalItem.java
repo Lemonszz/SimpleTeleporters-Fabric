@@ -23,11 +23,11 @@ public class TeleportCrystalItem extends Item {
 	public TeleportCrystalItem(Settings settings) {
 		super(settings);
 	}
-
+	
 	@Override
 	public ActionResult useOnBlock(ItemUsageContext ctx) {
 		PlayerEntity player = ctx.getPlayer();
-
+		
 		if (player.isSneaking()) {
 			ItemStack stack = ctx.getStack();
 			CompoundTag tags = stack.getTag();
@@ -35,42 +35,42 @@ public class TeleportCrystalItem extends Item {
 				stack.setTag(new CompoundTag());
 				tags = stack.getTag();
 			}
-
+			
 			BlockPos offPos = ctx.getBlockPos().offset(ctx.getSide());
 			tags.putInt("x", offPos.getX());
 			tags.putInt("y", offPos.getY());
 			tags.putInt("z", offPos.getZ());
 			tags.putInt("dim", player.dimension.getRawId());
 			tags.putFloat("direction", player.yaw);
-
+			
 			TranslatableText msg = new TranslatableText("text.teleporters.crystal_info", offPos.getX(), offPos.getY(), offPos.getZ());
 			msg.setStyle(new Style().setColor(Formatting.GREEN));
-
+			
 			player.addChatMessage(msg, true);
-
+			
 			player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.5F, 0.4F / (ctx.getWorld().random.nextFloat() * 0.4F + 0.8F));
 			return ActionResult.PASS;
 		}
-		return null;
+		return ActionResult.PASS;
 	}
-
+	
 	@Override
 	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext options) {
 		CompoundTag tags = stack.getTag();
 		if (tags == null) {
 			TranslatableText unlinked = new TranslatableText("text.teleporters.unlinked");
 			unlinked.setStyle(new Style().setColor(Formatting.RED));
-
+			
 			TranslatableText info = new TranslatableText("text.teleporters.how_to_link");
 			info.setStyle(new Style().setColor(Formatting.BLUE));
-
+			
 			tooltip.add(unlinked);
 			tooltip.add(info);
-
+			
 		} else {
 			TranslatableText pos = new TranslatableText("text.teleporters.linked", tags.getInt("x"), tags.getInt("y"), tags.getInt("z"), Registry.DIMENSION.getId(DimensionType.byRawId(tags.getInt("dim"))));
 			pos.setStyle(new Style().setColor(Formatting.GREEN));
-
+			
 			tooltip.add(pos);
 		}
 	}
