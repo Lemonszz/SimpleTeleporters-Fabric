@@ -40,13 +40,13 @@ public class TeleportCrystalItem extends Item {
 			tags.putInt("x", offPos.getX());
 			tags.putInt("y", offPos.getY());
 			tags.putInt("z", offPos.getZ());
-			tags.putInt("dim", player.dimension.getRawId());
+			tags.putString("dim", player.world.getDimensionRegistryKey().getValue().toString());
 			tags.putFloat("direction", player.yaw);
 			
 			TranslatableText msg = new TranslatableText("text.teleporters.crystal_info", offPos.getX(), offPos.getY(), offPos.getZ());
-			msg.setStyle(new Style().setColor(Formatting.GREEN));
+			msg.setStyle(Style.EMPTY.withColor(Formatting.GREEN));
 			
-			player.addChatMessage(msg, true);
+			player.sendMessage(msg, true);
 			
 			player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 0.5F, 0.4F / (ctx.getWorld().random.nextFloat() * 0.4F + 0.8F));
 			return ActionResult.PASS;
@@ -59,17 +59,17 @@ public class TeleportCrystalItem extends Item {
 		CompoundTag tags = stack.getTag();
 		if (tags == null) {
 			TranslatableText unlinked = new TranslatableText("text.teleporters.unlinked");
-			unlinked.setStyle(new Style().setColor(Formatting.RED));
+			unlinked.setStyle(Style.EMPTY.withColor(Formatting.RED));
 			
 			TranslatableText info = new TranslatableText("text.teleporters.how_to_link");
-			info.setStyle(new Style().setColor(Formatting.BLUE));
+			info.setStyle(Style.EMPTY.withColor(Formatting.BLUE));
 			
 			tooltip.add(unlinked);
 			tooltip.add(info);
 			
 		} else {
-			TranslatableText pos = new TranslatableText("text.teleporters.linked", tags.getInt("x"), tags.getInt("y"), tags.getInt("z"), Registry.DIMENSION.getId(DimensionType.byRawId(tags.getInt("dim"))));
-			pos.setStyle(new Style().setColor(Formatting.GREEN));
+			TranslatableText pos = new TranslatableText("text.teleporters.linked", tags.getInt("x"), tags.getInt("y"), tags.getInt("z"), tags.getString("dim"));
+			pos.setStyle(Style.EMPTY.withColor(Formatting.GREEN));
 			
 			tooltip.add(pos);
 		}

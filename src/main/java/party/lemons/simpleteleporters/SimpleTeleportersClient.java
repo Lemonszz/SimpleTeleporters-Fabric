@@ -1,14 +1,19 @@
 package party.lemons.simpleteleporters;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraft.util.registry.Registry;
+import party.lemons.simpleteleporters.init.SimpleTeleportersBlocks;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
 public class SimpleTeleportersClient implements ClientModInitializer {
@@ -22,7 +27,9 @@ public class SimpleTeleportersClient implements ClientModInitializer {
 					if (!stack.isEmpty() && stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL) {
 						CompoundTag tags = stack.getTag();
 						if (tags != null) {
-							if (tags.getInt("dim") == client.player.dimension.getRawId()) {
+							String s = tags.getString("dim");
+							Identifier id = new Identifier(s);
+							if (client.player.world.getDimensionRegistryKey().getValue().equals(id)) {
 								BlockPos telePos = new BlockPos(tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
 								if (distanceBetween(client.player.getBlockPos(), telePos) < 15) {
 									client.world.addParticle(ParticleTypes.MYCELIUM, // originally
@@ -37,6 +44,8 @@ public class SimpleTeleportersClient implements ClientModInitializer {
 				}
 			}
 		});
+
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), SimpleTeleportersBlocks.TELEPORTER);
 	}
 	
 	// TODO: replace with distanceTo or distanceSq as exists in BlockPos Or Vec3d API when it becomes evident

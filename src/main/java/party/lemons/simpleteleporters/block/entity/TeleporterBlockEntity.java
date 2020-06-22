@@ -37,7 +37,7 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 		if (tags == null)
 			return false;
 		
-		return tags.getInt("dim") == entityIn.dimension.getRawId();
+		return tags.getString("dim").equals(entityIn.world.getDimensionRegistryKey().getValue().toString());
 	}
 	
 	public ItemStack getCrystal() {
@@ -67,22 +67,24 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 		
 		return new BlockPos(xx, yy, zz);
 	}
-	
+
 	@Override
-	public void fromTag(CompoundTag compound) {
-		super.fromTag(compound);
-		
-		if (compound.contains("item")) {
-			stack = ItemStack.fromTag(compound.getCompound("item"));
+	public void fromTag(BlockState state, CompoundTag tag)
+	{
+		super.fromTag(state, tag);
+
+		if (tag.contains("item")) {
+			stack = ItemStack.fromTag(tag.getCompound("item"));
 		} else {
 			stack = ItemStack.EMPTY;
 		}
-		if (compound.contains("cooldown")) {
-			cooldown = compound.getInt("cooldown");
+		if (tag.contains("cooldown")) {
+			cooldown = tag.getInt("cooldown");
 		} else {
 			cooldown = 0;
 		}
 	}
+
 	
 	@Override
 	public CompoundTag toTag(CompoundTag compound) {

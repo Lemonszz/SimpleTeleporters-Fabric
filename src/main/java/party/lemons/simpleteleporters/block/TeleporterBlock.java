@@ -1,18 +1,13 @@
 package party.lemons.simpleteleporters.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.MessageType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -33,12 +28,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
+import net.minecraft.world.WorldAccess;
 import party.lemons.simpleteleporters.block.entity.TeleporterBlockEntity;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Random;
 
@@ -63,17 +59,17 @@ public class TeleporterBlock extends BlockWithEntity {
 					ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
 					
 					if (teleporterPos == null) {
-						splayer.sendChatMessage(new TranslatableText("text.teleporters.error.unlinked").setStyle(new Style().setColor(Formatting.RED)), MessageType.GAME_INFO);
+						splayer.sendMessage(new TranslatableText("text.teleporters.error.unlinked").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						return;
-					} else if (world.getBlockState(teleporterPos).canSuffocate(world, teleporterPos)) {
-						splayer.sendChatMessage(new TranslatableText("text.teleporters.error.invalid_position").setStyle(new Style().setColor(Formatting.RED)), MessageType.GAME_INFO);
+					} else if (world.getBlockState(teleporterPos).shouldSuffocate(world, teleporterPos)) {
+						splayer.sendMessage(new TranslatableText("text.teleporters.error.invalid_position").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						return;
 					}
 					
 					splayer.velocityModified = true;
 					
 					Vec3d playerPos = new Vec3d(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5);
-					splayer.networkHandler.teleportRequest(playerPos.getX(), playerPos.getY(), playerPos.getZ(), entity.yaw, entity.pitch, EnumSet.noneOf(net.minecraft.client.network.packet.PlayerPositionLookS2CPacket.Flag.class));
+					splayer.networkHandler.teleportRequest(playerPos.getX(), playerPos.getY(), playerPos.getZ(), entity.yaw, entity.pitch, Collections.EMPTY_SET);
 					
 					splayer.setVelocity(0, 0, 0);
 					splayer.velocityDirty = true;
@@ -90,12 +86,12 @@ public class TeleporterBlock extends BlockWithEntity {
 				if (!teleporter.hasCrystal()) {
 					if (entity instanceof ServerPlayerEntity && !world.isClient) {
 						ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
-						splayer.sendChatMessage(new TranslatableText("text.teleporters.error.no_crystal").setStyle(new Style().setColor(Formatting.RED)), MessageType.GAME_INFO);
+						splayer.sendMessage(new TranslatableText("text.teleporters.error.no_crystal").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 					}
 				} else if (!teleporter.isCoolingDown()) {
 					if (entity instanceof ServerPlayerEntity && !world.isClient) {
 						ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
-						splayer.sendChatMessage(new TranslatableText("text.teleporters.error.wrong_dimension").setStyle(new Style().setColor(Formatting.RED)), MessageType.GAME_INFO);
+						splayer.sendMessage(new TranslatableText("text.teleporters.error.wrong_dimension").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 					}
 				}
 			}
@@ -145,7 +141,7 @@ public class TeleporterBlock extends BlockWithEntity {
 	}
 	
 	@Override
-	public BlockState getStateForNeighborUpdate(BlockState state, Direction facing, BlockState neighborState, IWorld world, BlockPos pos, BlockPos neighborPos) {
+	public BlockState getStateForNeighborUpdate(BlockState state, Direction facing, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
 		if (state.get(WATERLOGGED)) {
 			world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world)); // getTickRate == method_15789?
 		}
@@ -157,17 +153,19 @@ public class TeleporterBlock extends BlockWithEntity {
 	public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos) {
 		return TELE_AABB;
 	}
-	
+
 	@Override
-	public VoxelShape getCollisionShape(BlockState state, BlockView view, BlockPos pos, EntityContext ePos) {
+	public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context)
+	{
 		return TELE_AABB;
 	}
-	
+
 	@Override
-	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, EntityContext ePos) {
+	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context)
+	{
 		return TELE_AABB;
 	}
-	
+
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> st) {
 		st.add(ON).add(WATERLOGGED);

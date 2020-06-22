@@ -17,7 +17,7 @@ public class SimpleTeleportersBlocks {
 	public static Block TELEPORTER;
 	
 	public static void init() {
-		TELEPORTER = registerBlock(new TeleporterBlock(FabricBlockSettings.of(Material.STONE).hardness(1).resistance(1).lightLevel(15).build()), "teleporter");
+		TELEPORTER = registerBlock(new TeleporterBlock(FabricBlockSettings.of(Material.STONE).nonOpaque().hardness(1).resistance(1).lightLevel(15).build()), "teleporter");
 	}
 	
 	private static Block registerBlock(Block block, String name) {
