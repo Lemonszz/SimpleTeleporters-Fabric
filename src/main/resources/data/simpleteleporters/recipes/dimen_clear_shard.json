@@ -1,0 +1,12 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "simpleteleporters:dimen_tele_crystal"
+    }
+  ],
+  "result": {
+    "item": "simpleteleporters:dimen_tele_crystal",
+    "count": 1
+  }
+}

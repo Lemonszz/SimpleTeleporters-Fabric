@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import party.lemons.simpleteleporters.init.SimpleTeleportersBlocks;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
+import party.lemons.simpleteleporters.item.BaseTeleportCrystalItem;
 
 public class SimpleTeleportersClient implements ClientModInitializer {
 	@Override
@@ -24,7 +25,7 @@ public class SimpleTeleportersClient implements ClientModInitializer {
 			if (client.world != null && client.player != null) {
 				for (Hand hand : Hand.values()) {
 					ItemStack stack = client.player.getStackInHand(hand);
-					if (!stack.isEmpty() && stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL) {
+					if (!stack.isEmpty() && stack.getItem() instanceof BaseTeleportCrystalItem) {
 						CompoundTag tags = stack.getTag();
 						if (tags != null) {
 							String s = tags.getString("dim");

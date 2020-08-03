@@ -10,6 +10,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -17,67 +18,85 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Style;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.dimension.DimensionType;
 import party.lemons.simpleteleporters.block.entity.TeleporterBlockEntity;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
+import party.lemons.simpleteleporters.item.BaseTeleportCrystalItem;
 
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Random;
+import java.util.Set;
 
 public class TeleporterBlock extends BlockWithEntity {
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 	protected static final VoxelShape TELE_AABB = VoxelShapes.cuboid(0D, 0.0D, 0D, 1D, 0.3D, 1D);
 	public static BooleanProperty ON = BooleanProperty.of("on");
-	
+
 	public TeleporterBlock(Settings settings) {
 		super(settings);
 		this.setDefaultState(this.getStateManager().getDefaultState().with(ON, false).with(WATERLOGGED, false));
 	}
-	
+
 	@Override
 	public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
 		if (entity.isSneaking() && entity instanceof PlayerEntity) {
 			TeleporterBlockEntity teleporter = (TeleporterBlockEntity) world.getBlockEntity(pos);
 			if (teleporter == null) return;
-			if (!teleporter.isCoolingDown() && teleporter.hasCrystal() && teleporter.isInDimension(entity)) {
+			if (!teleporter.isCoolingDown() && teleporter.hasCrystal() && teleporter.canTeleportTo(entity)) {
 				if (entity instanceof ServerPlayerEntity && !world.isClient) {
 					BlockPos teleporterPos = teleporter.getTeleportPosition();
 					ServerPlayerEntity splayer = (ServerPlayerEntity) entity;
-					
+					String targetWorld = teleporter.getTeleportWorld();
+					ServerWorld wrld = (ServerWorld) world;
+
+					// If we need to change dimensions, do so
+					if (!targetWorld.equals(world.getDimensionRegistryKey().toString())) {
+						wrld = world.getServer().getWorld(RegistryKey.of(Registry.DIMENSION, Identifier.tryParse(targetWorld)));
+
+						if (wrld == null) {
+							splayer.sendMessage(new TranslatableText("text.teleporters.error.missing_dimen", targetWorld).setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
+							return;
+						}
+					}
+
 					if (teleporterPos == null) {
 						splayer.sendMessage(new TranslatableText("text.teleporters.error.unlinked").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						return;
-					} else if (world.getBlockState(teleporterPos).shouldSuffocate(world, teleporterPos)) {
+					} else if (wrld.getBlockState(teleporterPos).shouldSuffocate(wrld, teleporterPos)) {
 						splayer.sendMessage(new TranslatableText("text.teleporters.error.invalid_position").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						return;
 					}
-					
+
 					splayer.velocityModified = true;
-					
+
+					// If we need to change dimensions, do so now
+					if (wrld != world)
+						splayer.changeDimension(wrld);
+
 					Vec3d playerPos = new Vec3d(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5);
 					splayer.networkHandler.teleportRequest(playerPos.getX(), playerPos.getY(), playerPos.getZ(), entity.yaw, entity.pitch, Collections.EMPTY_SET);
-					
+
 					splayer.setVelocity(0, 0, 0);
 					splayer.velocityDirty = true;
-					
-					world.playSoundFromEntity(null, splayer, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+					wrld.playSoundFromEntity(null, splayer, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 					teleporter.setCooldown(10);
-					
-					BlockEntity down = world.getBlockEntity(teleporterPos.down());
+
+					BlockEntity down = wrld.getBlockEntity(teleporterPos.down());
 					if (down != null && down instanceof TeleporterBlockEntity) {
 						((TeleporterBlockEntity) down).setCooldown(10);
 					}
@@ -97,7 +116,7 @@ public class TeleporterBlock extends BlockWithEntity {
 			}
 		}
 	}
-	
+
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
 		TeleporterBlockEntity tele = (TeleporterBlockEntity) world.getBlockEntity(pos);
@@ -105,15 +124,15 @@ public class TeleporterBlock extends BlockWithEntity {
 			ItemStack crystalStack = tele.getCrystal();
 			player.giveItemStack(crystalStack);
 			player.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
-			
+
 			world.setBlockState(pos, state.with(ON, false));
 			tele.setCrystal(ItemStack.EMPTY);
-			
+
 			return ActionResult.SUCCESS;
 		} else {
 			ItemStack stack = player.getStackInHand(hand);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL && stack.getTag() != null) {
+				if (stack.getItem() instanceof BaseTeleportCrystalItem && stack.getTag() != null) {
 					player.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 					world.setBlockState(pos, state.with(ON, true));
 					ItemStack setstack = stack.copy();
@@ -126,29 +145,29 @@ public class TeleporterBlock extends BlockWithEntity {
 		}
 		return ActionResult.PASS;
 	}
-	
+
 	@Override
 	public void onBreak(World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
 		TeleporterBlockEntity tele = (TeleporterBlockEntity) world.getBlockEntity(blockPos);
 		ItemScatterer.spawn(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), tele.getCrystal());
 		super.onBreak(world, blockPos, blockState, playerEntity);
 	}
-	
-	
+
+
 	@Override
 	public FluidState getFluidState(BlockState var1) {
 		return var1.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(var1);
 	}
-	
+
 	@Override
 	public BlockState getStateForNeighborUpdate(BlockState state, Direction facing, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
 		if (state.get(WATERLOGGED)) {
 			world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world)); // getTickRate == method_15789?
 		}
-		
+
 		return super.getStateForNeighborUpdate(state, facing, neighborState, world, pos, neighborPos);
 	}
-	
+
 	@Override
 	public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos) {
 		return TELE_AABB;
@@ -170,17 +189,17 @@ public class TeleporterBlock extends BlockWithEntity {
 	protected void appendProperties(StateManager.Builder<Block, BlockState> st) {
 		st.add(ON).add(WATERLOGGED);
 	}
-	
+
 	@Override
 	public BlockEntity createBlockEntity(BlockView blockView) {
 		return new TeleporterBlockEntity();
 	}
-	
+
 	@Override
 	public BlockRenderType getRenderType(BlockState var1) {
 		return BlockRenderType.MODEL;
 	}
-	
+
 	@Override
 	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
 		if (state.get(ON)) {
@@ -189,7 +208,7 @@ public class TeleporterBlock extends BlockWithEntity {
 			}
 		}
 	}
-	
+
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext ctx) {
 		FluidState fs = ctx.getWorld().getFluidState(ctx.getBlockPos());
