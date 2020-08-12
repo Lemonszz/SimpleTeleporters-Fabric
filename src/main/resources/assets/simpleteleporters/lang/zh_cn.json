@@ -3,7 +3,11 @@
     "block.simpleteleporters.teleporter": "传送器",
 
     "text.teleporters.unlinked": "未链接",
-    "text.teleporters.linked": "已链接到: %1$s, %2$s, %3$s",
-    "text.teleporters.howtolink": "潜行时右击方块以链接",
-    "text.teleporters.crystalinfo": "这个水晶链接在%1$s, %2$s, %3$s"
+    "text.teleporters.linked": "已与位置 %1$s，%2$s，%3$s 世界 %4$s 相链接",
+    "text.teleporters.how_to_link": "潜行时右击方块以链接",
+    "text.teleporters.crystal_info": "该末影碎片链接与 %1$s，%2$s，%3$s 相链接",
+    "text.teleporters.error.no_crystal": "这个传送器没有末影碎片。",
+    "text.teleporters.error.unlinked": "这个传送器的末影碎片尚未与方块链接",
+    "text.teleporters.error.invalid_position": "传送位置无效！请检查传送位置是否有方块。",
+    "text.teleporters.error.wrong_dimension": "这个传送器的末影碎片无法跨纬度传送。"
 }
