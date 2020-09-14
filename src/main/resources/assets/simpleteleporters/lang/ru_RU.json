@@ -1,0 +1,13 @@
+{
+    "item.simpleteleporters.tele_crystal": "Осколок Эндера",
+    "block.simpleteleporters.teleporter": "Телепорт",
+
+    "text.teleporters.unlinked": "Не привязан",
+    "text.teleporters.linked": "Привязан к: %1$s, %2$s, %3$s в %4$s",
+    "text.teleporters.how_to_link": "Нажмите ПКМ крадучись, чтобы привязать к месту",
+    "text.teleporters.crystal_info": "Осколок Эндера привязан к %1$s, %2$s, %3$s",
+    "text.teleporters.error.no_crystal": "Этому телепорту не хватает осколка Эндера!",
+    "text.teleporters.error.unlinked": "Осколок Эндера в этом телепорте не привязан ни к какому месту!",
+    "text.teleporters.error.invalid_position": "Неправильное место телепортации. Возможно, мешает блок?",
+    "text.teleporters.error.wrong_dimension": "Осколок Эндера в этом телепорте недостаточно могуч, чтобы пересечь границу измерений!"
+}
