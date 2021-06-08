@@ -3,14 +3,18 @@ package party.lemons.simpleteleporters.block.entity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 
+import party.lemons.simpleteleporters.block.TeleporterBlock;
 import party.lemons.simpleteleporters.init.SimpleTeleportersBlockEntities;
+import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
-public class TeleporterBlockEntity extends BlockEntity implements Tickable {
+public class TeleporterBlockEntity extends BlockEntity implements Inventory, Tickable {
 	private ItemStack stack = ItemStack.EMPTY;
 	private int cooldown = 0;
 	
@@ -48,8 +52,10 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 		this.stack = stack;
 		markDirty();
 		if (getWorld() != null) {
-			BlockState state = getWorld().getBlockState(getPos());
-			getWorld().updateListeners(getPos(), state, state, 3);
+			BlockPos pos = getPos();
+			BlockState state = getWorld().getBlockState(pos);
+			getWorld().setBlockState(pos, state.with(TeleporterBlock.ON, hasCrystal()));
+			getWorld().updateListeners(pos, state, state, 3);
 		}
 	}
 	
@@ -108,5 +114,60 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 	
 	public void setCooldown(int cooldown) {
 		this.cooldown = cooldown;
+	}
+
+	@Override
+	public int size() {
+		return 1;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return stack.isEmpty();
+	}
+
+	@Override
+	public ItemStack getStack(int slot) {
+		return getCrystal();
+	}
+
+	@Override
+	public ItemStack removeStack(int slot, int amount) {
+		ItemStack out = getCrystal();
+		setCrystal(ItemStack.EMPTY);
+		return out;
+	}
+
+	@Override
+	public ItemStack removeStack(int slot) {
+		return removeStack(0, 1);
+	}
+
+	@Override
+	public void setStack(int slot, ItemStack stack) {
+		setCrystal(stack);
+	}
+
+	@Override
+	public int getMaxCountPerStack() {
+		return 1;
+	}
+
+	@Override
+	public boolean isValid(int slot, ItemStack stack) {
+		if (!stack.isEmpty() && hasCrystal() || slot > 0) {
+			return false;
+		}
+		return stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL && stack.getTag() != null;
+	}
+
+	@Override
+	public boolean canPlayerUse(PlayerEntity player) {
+		return true;
+	}
+
+	@Override
+	public void clear() {
+		this.setCrystal(ItemStack.EMPTY);
 	}
 }
