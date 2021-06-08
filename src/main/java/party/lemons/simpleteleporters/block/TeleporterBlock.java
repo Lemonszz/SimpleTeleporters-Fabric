@@ -105,8 +105,6 @@ public class TeleporterBlock extends BlockWithEntity {
 			ItemStack crystalStack = tele.getCrystal();
 			player.giveItemStack(crystalStack);
 			player.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
-			
-			world.setBlockState(pos, state.with(ON, false));
 			tele.setCrystal(ItemStack.EMPTY);
 			
 			return ActionResult.SUCCESS;
@@ -115,7 +113,6 @@ public class TeleporterBlock extends BlockWithEntity {
 			if (!stack.isEmpty()) {
 				if (stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL && stack.getTag() != null) {
 					player.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
-					world.setBlockState(pos, state.with(ON, true));
 					ItemStack setstack = stack.copy();
 					setstack.setCount(1);
 					tele.setCrystal(setstack);
