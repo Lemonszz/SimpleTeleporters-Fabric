@@ -4,24 +4,22 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tickable;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.world.World;
 import party.lemons.simpleteleporters.init.SimpleTeleportersBlockEntities;
 
-public class TeleporterBlockEntity extends BlockEntity implements Tickable {
+public class TeleporterBlockEntity extends BlockEntity {
 	private ItemStack stack = ItemStack.EMPTY;
 	private int cooldown = 0;
 	
-	public TeleporterBlockEntity() {
-		super(SimpleTeleportersBlockEntities.TELE_BE);
+	public TeleporterBlockEntity(BlockPos pos, BlockState state) {
+		super(SimpleTeleportersBlockEntities.TELE_BE, pos, state);
 	}
-	
-	@Override
-	public void tick() {
-		if (isCoolingDown()) {
-			this.setCooldown(this.getCooldown() - 1);
+
+	public static void serverTick(World world, BlockPos pos, BlockState state, TeleporterBlockEntity blockEntity) {
+		if (blockEntity.isCoolingDown()) {
+			blockEntity.setCooldown(blockEntity.getCooldown() - 1);
 		}
 	}
 	
@@ -33,11 +31,11 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 		if (getCrystal().isEmpty())
 			return false;
 		
-		CompoundTag tags = getCrystal().getTag();
+		NbtCompound tags = getCrystal().getTag();
 		if (tags == null)
 			return false;
 		
-		return tags.getString("dim").equals(entityIn.world.getDimensionRegistryKey().getValue().toString());
+		return tags.getString("dim").equals(entityIn.world.getRegistryKey().getValue().toString());
 	}
 	
 	public ItemStack getCrystal() {
@@ -57,7 +55,7 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 		if (!hasCrystal())
 			return null;
 		
-		CompoundTag tags = getCrystal().getTag();
+		NbtCompound tags = getCrystal().getTag();
 		if (tags == null)
 			return null;
 		
@@ -69,12 +67,10 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 	}
 
 	@Override
-	public void fromTag(BlockState state, CompoundTag tag)
+	public void readNbt(NbtCompound tag)
 	{
-		super.fromTag(state, tag);
-
 		if (tag.contains("item")) {
-			stack = ItemStack.fromTag(tag.getCompound("item"));
+			stack = ItemStack.fromNbt(tag.getCompound("item"));
 		} else {
 			stack = ItemStack.EMPTY;
 		}
@@ -87,11 +83,11 @@ public class TeleporterBlockEntity extends BlockEntity implements Tickable {
 
 	
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
-		compound = super.toTag(compound);
+	public NbtCompound writeNbt(NbtCompound compound) {
+		compound = super.writeNbt(compound);
 		
 		if (!stack.isEmpty()) {
-			CompoundTag tagCompound = stack.toTag(new CompoundTag());
+			NbtCompound tagCompound = stack.writeNbt(new NbtCompound());
 			compound.put("item", tagCompound);
 		}
 		compound.putInt("cooldown", cooldown);

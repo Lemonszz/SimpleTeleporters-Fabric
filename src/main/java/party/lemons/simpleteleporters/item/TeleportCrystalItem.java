@@ -5,7 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -13,9 +13,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.List;
 
@@ -28,11 +26,11 @@ public class TeleportCrystalItem extends Item {
 	public ActionResult useOnBlock(ItemUsageContext ctx) {
 		PlayerEntity player = ctx.getPlayer();
 		
-		if (player.isSneaking()) {
+		if (player.isSneaking() && !player.world.isClient()) {
 			ItemStack stack = ctx.getStack();
-			CompoundTag tags = stack.getTag();
+			NbtCompound tags = stack.getTag();
 			if (tags == null) {
-				stack.setTag(new CompoundTag());
+				stack.setTag(new NbtCompound());
 				tags = stack.getTag();
 			}
 			
@@ -40,8 +38,8 @@ public class TeleportCrystalItem extends Item {
 			tags.putInt("x", offPos.getX());
 			tags.putInt("y", offPos.getY());
 			tags.putInt("z", offPos.getZ());
-			tags.putString("dim", player.world.getDimensionRegistryKey().getValue().toString());
-			tags.putFloat("direction", player.yaw);
+			tags.putString("dim", player.world.getRegistryKey().getValue().toString());
+			tags.putFloat("direction", player.getYaw());
 			
 			TranslatableText msg = new TranslatableText("text.teleporters.crystal_info", offPos.getX(), offPos.getY(), offPos.getZ());
 			msg.setStyle(Style.EMPTY.withColor(Formatting.GREEN));
@@ -56,7 +54,7 @@ public class TeleportCrystalItem extends Item {
 	
 	@Override
 	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext options) {
-		CompoundTag tags = stack.getTag();
+		NbtCompound tags = stack.getTag();
 		if (tags == null) {
 			TranslatableText unlinked = new TranslatableText("text.teleporters.unlinked");
 			unlinked.setStyle(Style.EMPTY.withColor(Formatting.RED));

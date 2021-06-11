@@ -3,16 +3,13 @@ package party.lemons.simpleteleporters;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-
-import net.minecraft.util.registry.Registry;
 import party.lemons.simpleteleporters.init.SimpleTeleportersBlocks;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
@@ -25,11 +22,11 @@ public class SimpleTeleportersClient implements ClientModInitializer {
 				for (Hand hand : Hand.values()) {
 					ItemStack stack = client.player.getStackInHand(hand);
 					if (!stack.isEmpty() && stack.getItem() == SimpleTeleportersItems.TELE_CRYSTAL) {
-						CompoundTag tags = stack.getTag();
+						NbtCompound tags = stack.getTag();
 						if (tags != null) {
 							String s = tags.getString("dim");
 							Identifier id = new Identifier(s);
-							if (client.player.world.getDimensionRegistryKey().getValue().equals(id)) {
+							if (client.player.world.getRegistryKey().getValue().equals(id)) {
 								BlockPos telePos = new BlockPos(tags.getInt("x"), tags.getInt("y"), tags.getInt("z"));
 								if (distanceBetween(client.player.getBlockPos(), telePos) < 15) {
 									client.world.addParticle(ParticleTypes.MYCELIUM, // originally

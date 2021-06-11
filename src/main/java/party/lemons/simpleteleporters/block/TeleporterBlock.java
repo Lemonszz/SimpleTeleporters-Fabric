@@ -2,6 +2,8 @@ package party.lemons.simpleteleporters.block;
 
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
@@ -29,13 +31,13 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-
 import net.minecraft.world.WorldAccess;
+import org.jetbrains.annotations.Nullable;
 import party.lemons.simpleteleporters.block.entity.TeleporterBlockEntity;
+import party.lemons.simpleteleporters.init.SimpleTeleportersBlockEntities;
 import party.lemons.simpleteleporters.init.SimpleTeleportersItems;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Random;
 
 public class TeleporterBlock extends BlockWithEntity {
@@ -46,6 +48,11 @@ public class TeleporterBlock extends BlockWithEntity {
 	public TeleporterBlock(Settings settings) {
 		super(settings);
 		this.setDefaultState(this.getStateManager().getDefaultState().with(ON, false).with(WATERLOGGED, false));
+	}
+
+	@Nullable
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+		return world.isClient ? null : checkType(type, SimpleTeleportersBlockEntities.TELE_BE, TeleporterBlockEntity::serverTick);
 	}
 	
 	@Override
@@ -69,7 +76,7 @@ public class TeleporterBlock extends BlockWithEntity {
 					splayer.velocityModified = true;
 					
 					Vec3d playerPos = new Vec3d(teleporterPos.getX() + 0.5, teleporterPos.getY(), teleporterPos.getZ() + 0.5);
-					splayer.networkHandler.teleportRequest(playerPos.getX(), playerPos.getY(), playerPos.getZ(), entity.yaw, entity.pitch, Collections.EMPTY_SET);
+					splayer.networkHandler.requestTeleport(playerPos.getX(), playerPos.getY(), playerPos.getZ(), entity.getYaw(), entity.getPitch(), Collections.EMPTY_SET);
 					
 					splayer.setVelocity(0, 0, 0);
 					splayer.velocityDirty = true;
@@ -78,7 +85,7 @@ public class TeleporterBlock extends BlockWithEntity {
 					teleporter.setCooldown(10);
 					
 					BlockEntity down = world.getBlockEntity(teleporterPos.down());
-					if (down != null && down instanceof TeleporterBlockEntity) {
+					if (down instanceof TeleporterBlockEntity) {
 						((TeleporterBlockEntity) down).setCooldown(10);
 					}
 				}
@@ -148,9 +155,9 @@ public class TeleporterBlock extends BlockWithEntity {
 		
 		return super.getStateForNeighborUpdate(state, facing, neighborState, world, pos, neighborPos);
 	}
-	
+
 	@Override
-	public VoxelShape getRayTraceShape(BlockState state, BlockView world, BlockPos pos) {
+	public VoxelShape getRaycastShape(BlockState state, BlockView world, BlockPos pos) {
 		return TELE_AABB;
 	}
 
@@ -172,11 +179,6 @@ public class TeleporterBlock extends BlockWithEntity {
 	}
 	
 	@Override
-	public BlockEntity createBlockEntity(BlockView blockView) {
-		return new TeleporterBlockEntity();
-	}
-	
-	@Override
 	public BlockRenderType getRenderType(BlockState var1) {
 		return BlockRenderType.MODEL;
 	}
@@ -195,5 +197,11 @@ public class TeleporterBlock extends BlockWithEntity {
 		FluidState fs = ctx.getWorld().getFluidState(ctx.getBlockPos());
 		boolean isWater = fs.getFluid().equals(Fluids.WATER);
 		return this.getDefaultState().with(WATERLOGGED, isWater);
+	}
+
+	@Nullable
+	@Override
+	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+		return new TeleporterBlockEntity(pos, state);
 	}
 }
