@@ -1,0 +1,28 @@
+{
+  "block.teleporter.teleport": {
+    "sounds": [
+      "mob/endermen/portal",
+      "mob/endermen/portal2"
+    ],
+    "subtitle": "subtitles.block.teleporter.teleport"
+  },
+  "block.teleporter.crystal_inserted": {
+    "sounds": [
+      "random/bow"
+    ],
+    "subtitle": "subtitles.block.teleporter.crystal_inserted"
+  },
+  "block.teleporter.crystal_removed": {
+    "sounds": [
+      "random/bow"
+    ],
+    "subtitle": "subtitles.block.teleporter.crystal_removed"
+  },
+  "item.ender_shard.link": {
+    "sounds": [
+      "mob/endermen/portal",
+      "mob/endermen/portal2"
+    ],
+    "subtitle": "subtitles.item.ender_shard.link"
+  }
+}

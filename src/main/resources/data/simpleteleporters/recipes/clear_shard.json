@@ -2,11 +2,11 @@
   "type": "crafting_shapeless",
   "ingredients": [
     {
-      "item": "simpleteleporters:tele_crystal"
+      "item": "simpleteleporters:ender_shard"
     }
   ],
   "result": {
-    "item": "simpleteleporters:tele_crystal",
+    "item": "simpleteleporters:ender_shard",
     "count": 1
   }
 }

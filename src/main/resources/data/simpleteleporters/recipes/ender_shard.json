@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "minecraft:ender_eye"
   },
-  "result": "simpleteleporters:tele_crystal",
+  "result": "simpleteleporters:ender_shard",
   "experience": 0.7,
   "cookingtime": 200
 }

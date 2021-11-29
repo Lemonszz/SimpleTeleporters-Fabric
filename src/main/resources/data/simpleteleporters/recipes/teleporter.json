@@ -1,19 +1,22 @@
 {
   "type": "crafting_shaped",
   "pattern": [
-    " # ",
-    "BQB",
+    " C ",
+    "GNG",
     "QQQ"
   ],
   "key": {
-    "#": {
+    "G": {
       "item": "minecraft:gold_block"
     },
-    "B": {
-      "item": "simpleteleporters:tele_crystal"
+    "C": {
+      "item": "simpleteleporters:ender_shard"
     },
     "Q": {
       "item": "minecraft:quartz_block"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
     }
   },
   "result": {

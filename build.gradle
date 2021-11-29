@@ -1,51 +1,87 @@
 plugins {
-	id 'fabric-loom' version '0.4-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
+archivesBaseName = project.mod_name
+version = project.mod_version + "+" + project.version_meta
 group = project.maven_group
 
 minecraft {
 }
 
+repositories {
+	maven { url "https://maven.terraformersmc.com/"}
+	maven { url "https://maven.shedaniel.me/" }
+}
+
 dependencies {
+	// Minecraft
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    // Yarn
+    mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}:v${project.tiny_version}"
+
+    // Fabric Loader
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fapi_version}"
 	
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	// ModMenu
+    modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 	
-	modImplementation  "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation  "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	// RoughlyEnoughItems
+	modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+}
+
+java {
+	withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+
+	it.options.release = 17
 }
 
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", project.mod_version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
+		expand "version": project.mod_version
 	}
 }
 
-idea {
-	module {
-		inheritOutputDirs = false
-		outputDir = compileJava.destinationDir
-		testOutputDir = compileTestJava.destinationDir
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}" }
 	}
+	manifest {
+        attributes([
+                "Specification-Title"     : "${mod_name}",
+                "Specification-Vendor"    : "${maven_group}",
+                "Specification-Version"   : "${mod_version}",
+                "Implementation-Title"    : "${mod_name}",
+                "Implementation-Version"  : "${mod_version}",
+                "Implementation-Vendor"   : "${maven_group}",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs"            : "${mod_name}.mixins.json"
+        ])
+    }
 }
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+		mavenLocal()
+	}
 }

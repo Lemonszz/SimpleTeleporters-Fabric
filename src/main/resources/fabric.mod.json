@@ -13,14 +13,14 @@
     "sources": "https://github.com/Lemonszz/SimpleTeleporters-Fabric",
     "issues": "https://github.com/Lemonszz/SimpleTeleporters-Fabric/issues"
   },
-  "license": "MIT License",
+  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "party.lemons.simpleteleporters.SimpleTeleporters"
+      "com.shnupbups.simpleteleporters.SimpleTeleporters"
     ],
     "client": [
-      "party.lemons.simpleteleporters.SimpleTeleportersClient"
+      "com.shnupbups.simpleteleporters.SimpleTeleportersClient"
     ]
   },
   "depends": {
