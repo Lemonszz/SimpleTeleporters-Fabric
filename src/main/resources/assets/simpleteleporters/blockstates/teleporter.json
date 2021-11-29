@@ -1,6 +1,7 @@
 {
-    "variants": {
-        "on=true": { "model": "simpleteleporters:block/teleporter" },
-        "on=false": { "model": "simpleteleporters:block/teleporter" }
+  "variants": {
+    "": {
+      "model": "simpleteleporters:block/teleporter"
     }
+  }
 }
