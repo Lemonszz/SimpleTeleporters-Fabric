@@ -29,7 +29,7 @@ public class SimpleTeleportersClient implements ClientModInitializer {
 						NbtCompound nbt = stack.getNbt();
 						if (TeleportCrystalItem.hasPosition(nbt)) {
 							RegistryKey<World> dimension = TeleportCrystalItem.getDimensionKey(nbt);
-							if (client.player.getWorld().getRegistryKey().equals(dimension)) {
+							if (client.player.world.getRegistryKey().equals(dimension)) {
 								BlockPos telePos = TeleportCrystalItem.getPosition(nbt);
 								if(client.world.getBlockState(telePos.down()).isOf(SimpleTeleportersBlocks.TELEPORTER)) {
 									telePos = telePos.down();

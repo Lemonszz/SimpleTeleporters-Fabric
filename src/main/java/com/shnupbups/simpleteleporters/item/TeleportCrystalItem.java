@@ -83,7 +83,7 @@ public class TeleportCrystalItem extends Item {
 				offsetPos = pos.offset(ctx.getSide());
 			}
 			nbt.putLong("pos", offsetPos.asLong());
-			nbt.putString("dimension", player.getWorld().getRegistryKey().getValue().toString());
+			nbt.putString("dimension", player.world.getRegistryKey().getValue().toString());
 
 			if(!player.giveItemStack(stack)) {
 				player.dropItem(stack, false);

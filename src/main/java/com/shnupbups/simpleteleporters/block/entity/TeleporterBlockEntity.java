@@ -34,7 +34,7 @@ public class TeleporterBlockEntity extends BlockEntity {
 			return false;
 
 		NbtCompound nbt = getCrystal().getNbt();
-		return TeleportCrystalItem.getDimensionKey(nbt).equals(entity.getWorld().getRegistryKey());
+		return TeleportCrystalItem.getDimensionKey(nbt).equals(entity.world.getRegistryKey());
 	}
 
 	public ItemStack getCrystal() {
@@ -76,13 +76,14 @@ public class TeleporterBlockEntity extends BlockEntity {
 
 
 	@Override
-	public void writeNbt(NbtCompound nbt) {
+	public NbtCompound writeNbt(NbtCompound nbt) {
 		super.writeNbt(nbt);
 
 		if (!crystal.isEmpty()) {
 			nbt.put("crystal", this.crystal.writeNbt(new NbtCompound()));
 		}
 		nbt.putInt("cooldown", cooldown);
+		return nbt;
 	}
 
 	public boolean isCoolingDown() {
