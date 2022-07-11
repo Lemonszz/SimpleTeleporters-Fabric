@@ -8,13 +8,13 @@
   },
   "block.teleporter.crystal_inserted": {
     "sounds": [
-      "random/bow"
+      "random/pop"
     ],
     "subtitle": "subtitles.block.teleporter.crystal_inserted"
   },
   "block.teleporter.crystal_removed": {
     "sounds": [
-      "random/bow"
+      "random/pop"
     ],
     "subtitle": "subtitles.block.teleporter.crystal_removed"
   },

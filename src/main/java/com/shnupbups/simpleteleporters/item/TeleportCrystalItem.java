@@ -2,6 +2,7 @@ package com.shnupbups.simpleteleporters.item;
 
 import java.util.List;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -62,9 +63,9 @@ public class TeleportCrystalItem extends Item {
 
 	@Override
 	public ActionResult useOnBlock(ItemUsageContext ctx) {
-		PlayerEntity player = ctx.getPlayer();
+		if (ctx.shouldCancelInteraction()) {
+			PlayerEntity player = ctx.getPlayer();
 
-		if (player != null && player.isSneaking()) {
 			ItemStack stack = ctx.getStack().split(1);
 			NbtCompound nbt = stack.getNbt();
 			if (nbt == null) {
@@ -83,13 +84,14 @@ public class TeleportCrystalItem extends Item {
 				offsetPos = pos.offset(ctx.getSide());
 			}
 			nbt.putLong("pos", offsetPos.asLong());
-			nbt.putString("dimension", player.getWorld().getRegistryKey().getValue().toString());
+			String dimensionName = player.getWorld().getRegistryKey().getValue().toString();
+			nbt.putString("dimension", dimensionName);
 
 			if(!player.giveItemStack(stack)) {
 				player.dropItem(stack, false);
 			}
 
-			MutableText msg = Text.translatable("text.simpleteleporters.crystal_info", offsetPos.getX(), offsetPos.getY(), offsetPos.getZ());
+			MutableText msg = Text.translatable("text.simpleteleporters.crystal_info", offsetPos.getX(), offsetPos.getY(), offsetPos.getZ(), dimensionName);
 			msg.setStyle(Style.EMPTY.withColor(Formatting.GREEN));
 
 			player.sendMessage(msg, true);
@@ -107,11 +109,18 @@ public class TeleportCrystalItem extends Item {
 		if (!hasPosition(nbt)) {
 			MutableText unlinked = Text.translatable("text.simpleteleporters.unlinked");
 			unlinked.setStyle(Style.EMPTY.withColor(Formatting.RED));
-
-			MutableText info = Text.translatable("text.simpleteleporters.how_to_link");
-			info.setStyle(Style.EMPTY.withColor(Formatting.BLUE));
-
 			tooltip.add(unlinked);
+
+			Text sneakKey = Text.literal("Sneak");
+			Text useKey = Text.literal("Right Click");
+
+			if (world != null && world.isClient()) {
+				sneakKey = Text.keybind(MinecraftClient.getInstance().options.sneakKey.getTranslationKey());
+				useKey = Text.keybind(MinecraftClient.getInstance().options.useKey.getTranslationKey());
+			}
+
+			MutableText info = Text.translatable("text.simpleteleporters.how_to_link", sneakKey, useKey);
+			info.setStyle(Style.EMPTY.withColor(Formatting.BLUE));
 			tooltip.add(info);
 		} else {
 			MutableText pos = Text.translatable("text.simpleteleporters.linked", getX(nbt), getY(nbt), getZ(nbt), getDimensionName(nbt));

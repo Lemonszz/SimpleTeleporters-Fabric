@@ -1,11 +1,13 @@
 package com.shnupbups.simpleteleporters;
 
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
@@ -20,25 +22,28 @@ import com.shnupbups.simpleteleporters.item.TeleportCrystalItem;
 public class SimpleTeleportersClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		ClientTickEvents.END_CLIENT_TICK.register((client) ->
-		{
-			if (client.world != null && client.player != null) {
+		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
+			if (client.player != null) {
+				ClientPlayerEntity player = client.player;
+				World world = player.getWorld();
+				Random random = world.getRandom();
 				for (Hand hand : Hand.values()) {
-					ItemStack stack = client.player.getStackInHand(hand);
-					if (!stack.isEmpty() && stack.getItem() == SimpleTeleportersItems.ENDER_SHARD) {
+					ItemStack stack = player.getStackInHand(hand);
+					if (!stack.isEmpty() && stack.isOf(SimpleTeleportersItems.ENDER_SHARD)) {
 						NbtCompound nbt = stack.getNbt();
 						if (TeleportCrystalItem.hasPosition(nbt)) {
 							RegistryKey<World> dimension = TeleportCrystalItem.getDimensionKey(nbt);
-							if (client.player.getWorld().getRegistryKey().equals(dimension)) {
+							if (world.getRegistryKey().equals(dimension)) {
 								BlockPos telePos = TeleportCrystalItem.getPosition(nbt);
-								if(client.world.getBlockState(telePos.down()).isOf(SimpleTeleportersBlocks.TELEPORTER)) {
-									telePos = telePos.down();
+								BlockPos downPos = telePos.down();
+								if(world.getBlockState(downPos).isOf(SimpleTeleportersBlocks.TELEPORTER)) {
+									telePos = downPos;
 								}
-								if (Math.sqrt(client.player.getBlockPos().getSquaredDistance(telePos)) < 15) {
-									client.world.addParticle(ParticleTypes.MYCELIUM, // originally
-											telePos.getX() + (1.1 - client.world.getRandom().nextFloat()),
-											telePos.getY() + (1.1 - client.world.getRandom().nextFloat()),
-											telePos.getZ() + (1.1 - client.world.getRandom().nextFloat()),
+								if (player.getBlockPos().getManhattanDistance(telePos) < 15) {
+									world.addParticle(ParticleTypes.MYCELIUM,
+											random.nextTriangular(telePos.getX() + 0.5, 0.2),
+											random.nextTriangular(telePos.getY() + 0.5, 0.2),
+											random.nextTriangular(telePos.getZ() + 0.5, 0.2),
 											0, 0, 0);
 								}
 							}

@@ -14,6 +14,7 @@
     "issues": "https://github.com/Lemonszz/SimpleTeleporters-Fabric/issues"
   },
   "license": "MIT",
+  "icon": "assets/simpleteleporters/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

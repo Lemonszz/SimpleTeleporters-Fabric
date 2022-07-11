@@ -94,10 +94,10 @@ public class TeleporterBlock extends BlockWithEntity {
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
 		if (world.getBlockEntity(pos) instanceof TeleporterBlockEntity teleporter) {
 			if (teleporter.hasCrystal()) {
-				ItemStack crystalStack = teleporter.getCrystal();
+				ItemStack crystal = teleporter.getCrystal();
 
-				if(!player.giveItemStack(crystalStack)) {
-					player.dropItem(crystalStack, false);
+				if(!player.giveItemStack(crystal)) {
+					player.dropItem(crystal, true);
 				}
 
 				player.playSound(SimpleTeleportersSoundEvents.TELEPORTER_CRYSTAL_REMOVED, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
@@ -114,10 +114,8 @@ public class TeleporterBlock extends BlockWithEntity {
 						if (TeleportCrystalItem.hasPosition(stack.getNbt())) {
 							player.playSound(SimpleTeleportersSoundEvents.TELEPORTER_CRYSTAL_INSERTED, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 							world.setBlockState(pos, state.with(ON, true));
-							ItemStack crystal = stack.copy();
-							crystal.setCount(1);
+							ItemStack crystal = stack.split(1);
 							teleporter.setCrystal(crystal);
-							stack.decrement(1);
 
 							return ActionResult.SUCCESS;
 						} else {
