@@ -8,9 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -89,7 +89,7 @@ public class TeleportCrystalItem extends Item {
 				player.dropItem(stack, false);
 			}
 
-			TranslatableText msg = new TranslatableText("text.simpleteleporters.crystal_info", offsetPos.getX(), offsetPos.getY(), offsetPos.getZ());
+			MutableText msg = Text.translatable("text.simpleteleporters.crystal_info", offsetPos.getX(), offsetPos.getY(), offsetPos.getZ());
 			msg.setStyle(Style.EMPTY.withColor(Formatting.GREEN));
 
 			player.sendMessage(msg, true);
@@ -105,16 +105,16 @@ public class TeleportCrystalItem extends Item {
 	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext options) {
 		NbtCompound nbt = stack.getNbt();
 		if (!hasPosition(nbt)) {
-			TranslatableText unlinked = new TranslatableText("text.simpleteleporters.unlinked");
+			MutableText unlinked = Text.translatable("text.simpleteleporters.unlinked");
 			unlinked.setStyle(Style.EMPTY.withColor(Formatting.RED));
 
-			TranslatableText info = new TranslatableText("text.simpleteleporters.how_to_link");
+			MutableText info = Text.translatable("text.simpleteleporters.how_to_link");
 			info.setStyle(Style.EMPTY.withColor(Formatting.BLUE));
 
 			tooltip.add(unlinked);
 			tooltip.add(info);
 		} else {
-			TranslatableText pos = new TranslatableText("text.simpleteleporters.linked", getX(nbt), getY(nbt), getZ(nbt), getDimensionName(nbt));
+			MutableText pos = Text.translatable("text.simpleteleporters.linked", getX(nbt), getY(nbt), getZ(nbt), getDimensionName(nbt));
 			pos.setStyle(Style.EMPTY.withColor(Formatting.GREEN));
 
 			tooltip.add(pos);

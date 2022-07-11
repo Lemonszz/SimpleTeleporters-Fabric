@@ -1,12 +1,11 @@
 package com.shnupbups.simpleteleporters.block;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.ShapeContext;
+import com.shnupbups.simpleteleporters.block.entity.TeleporterBlockEntity;
+import com.shnupbups.simpleteleporters.init.SimpleTeleportersBlockEntities;
+import com.shnupbups.simpleteleporters.init.SimpleTeleportersItems;
+import com.shnupbups.simpleteleporters.init.SimpleTeleportersSoundEvents;
+import com.shnupbups.simpleteleporters.item.TeleportCrystalItem;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -19,12 +18,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Style;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -33,18 +31,13 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
-
-import com.shnupbups.simpleteleporters.block.entity.TeleporterBlockEntity;
-import com.shnupbups.simpleteleporters.init.SimpleTeleportersBlockEntities;
-import com.shnupbups.simpleteleporters.init.SimpleTeleportersItems;
-import com.shnupbups.simpleteleporters.init.SimpleTeleportersSoundEvents;
-import com.shnupbups.simpleteleporters.item.TeleportCrystalItem;
 
 public class TeleporterBlock extends BlockWithEntity {
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
@@ -64,16 +57,16 @@ public class TeleporterBlock extends BlockWithEntity {
 			if (entity.isSneaking()) {
 				if (world.getBlockEntity(pos) instanceof TeleporterBlockEntity teleporter) {
 					if (!teleporter.hasCrystal()) {
-						player.sendMessage(new TranslatableText("text.simpleteleporters.error.no_crystal").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
+						player.sendMessage(Text.translatable("text.simpleteleporters.error.no_crystal").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 					} else if (!teleporter.isInDimension(entity)) {
-						player.sendMessage(new TranslatableText("text.simpleteleporters.error.wrong_dimension").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
+						player.sendMessage(Text.translatable("text.simpleteleporters.error.wrong_dimension").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 					} else if (!teleporter.isCoolingDown()) {
 						BlockPos teleportPos = teleporter.getTeleportPos();
 
 						if (teleportPos == null) {
-							player.sendMessage(new TranslatableText("text.simpleteleporters.error.unlinked_teleporter").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
+							player.sendMessage(Text.translatable("text.simpleteleporters.error.unlinked_teleporter").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						} else if (world.getBlockState(teleportPos).shouldSuffocate(world, teleportPos)) {
-							player.sendMessage(new TranslatableText("text.simpleteleporters.error.invalid_position").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
+							player.sendMessage(Text.translatable("text.simpleteleporters.error.invalid_position").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						} else {
 							player.velocityModified = true;
 
@@ -128,7 +121,7 @@ public class TeleporterBlock extends BlockWithEntity {
 
 							return ActionResult.SUCCESS;
 						} else {
-							player.sendMessage(new TranslatableText("text.simpleteleporters.error.unlinked_shard").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
+							player.sendMessage(Text.translatable("text.simpleteleporters.error.unlinked_shard").setStyle(Style.EMPTY.withColor(Formatting.RED)), true);
 						}
 					}
 				}
